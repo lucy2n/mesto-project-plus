@@ -1,9 +1,9 @@
-import { model, Model, Schema, Document, ObjectId } from 'mongoose';
-
+import { model, Schema, ObjectId } from 'mongoose';
+import user from './user';
 export interface ICard {
   name: string;
   link: string;
-  owner: Schema.Types.ObjectId;
+  owner: typeof user;
   likes: ObjectId[];
   createdAt: Date
 }
@@ -20,7 +20,7 @@ const cardSchema = new Schema<ICard>({
     required: true
   },
   owner: {
-    type:  Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'user',
     required: true
   },
@@ -28,6 +28,7 @@ const cardSchema = new Schema<ICard>({
     default: []
   },
   createdAt: {
+    type: Date,
     default: Date.now
   }
 })
