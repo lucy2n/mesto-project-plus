@@ -3,7 +3,7 @@ import { model, Schema } from 'mongoose';
 export interface IUser {
   name: string;
   about: string;
-  avatar: string
+  avatar: string,
 }
 
 const userSchema = new Schema<IUser>({
