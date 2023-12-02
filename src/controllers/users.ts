@@ -10,6 +10,7 @@ import {
   SERVER_ERROR_MESSAGE,
   VALIDATION_ERROR_NAME,
   CREATED,
+  CAST_ERROR_NAME,
 } from '../utils/constants';
 
 export const getUsers = (req: Request, res: Response) => {
@@ -27,8 +28,8 @@ export const getUserById = (req: Request, res: Response) => {
     .catch((err: Error) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         res.status(NOT_FOUND).send({ message: NOT_FOUND_ERROR_USER_MESSAGE });
-      } else if (err.name === VALIDATION_ERROR_NAME) {
-        res.status(VALIDATION_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
+        res.status(VALIDATION_ERROR).send({ message: 'Переданы некорректные данные при поиске пользователя' });
       } else {
         res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
       }
@@ -40,7 +41,7 @@ export const createUser = (req: Request, res: Response) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err: Error) => {
-      if (err.name === VALIDATION_ERROR_NAME) {
+      if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
         res.status(VALIDATION_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя' });
       } else {
         res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
@@ -66,7 +67,7 @@ export const updateProfile = (req: IUserRequest, res: Response) => {
     .catch((err) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         res.status(NOT_FOUND).send({ message: NOT_FOUND_ERROR_USER_MESSAGE });
-      } else if (err.name === VALIDATION_ERROR_NAME) {
+      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
         res.status(VALIDATION_ERROR).send({ message: 'Переданы некорректные данные при обновлении пользователя' });
       } else {
         res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
@@ -92,7 +93,7 @@ export const updateProfileAvatar = (req: IUserRequest, res: Response) => {
     .catch((err) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         res.status(NOT_FOUND).send({ message: NOT_FOUND_ERROR_USER_MESSAGE });
-      } else if (err.name === VALIDATION_ERROR_NAME) {
+      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
         res.status(VALIDATION_ERROR).send({ message: 'Переданы некорректные данные при обновлении аватара' });
       } else {
         res.status(SERVER_ERROR).send({ message: SERVER_ERROR_MESSAGE });
