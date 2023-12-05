@@ -22,18 +22,9 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
   User.findById(req.params.userId)
     .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
     .then((user) => {
-      if (!user) {
-        throw (new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE));
-      }
       res.status(REQUEST_OK).send({ data: user });
     })
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -88,13 +79,7 @@ export const updateProfile = (req: IUserRequest, res: Response, next: NextFuncti
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 export const updateProfileAvatar = (req: IUserRequest, res: Response, next: NextFunction) => {
@@ -112,13 +97,7 @@ export const updateProfileAvatar = (req: IUserRequest, res: Response, next: Next
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 export const login = (req: Request, res: Response, next: NextFunction) => {
@@ -141,11 +120,5 @@ export const getUser = (req: IUserRequest, res: Response, next: NextFunction) =>
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
-    .catch((err: Error) => {
-      if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err: Error) => next(err));
 };

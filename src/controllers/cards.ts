@@ -26,13 +26,7 @@ export const deleteCardById = (req: IUserRequest, res: Response, next: NextFunct
     })
     .then((card) => Card.findByIdAndDelete(card))
     .then((card) => res.status(REQUEST_OK).send({ data: card }))
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_CARD_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 export const createCard = (req: IUserRequest, res: Response, next: NextFunction) => {
@@ -53,13 +47,7 @@ export const likeCard = (req: Request, res: Response, next: NextFunction) => {
     .then((card) => {
       res.status(REQUEST_OK).send({ data: card });
     })
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_CARD_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 export const dislikeCard = (req: Request, res: Response, next: NextFunction) => {
@@ -73,11 +61,5 @@ export const dislikeCard = (req: Request, res: Response, next: NextFunction) => 
     .then((card) => {
       res.status(REQUEST_OK).send({ data: card });
     })
-    .catch((err) => {
-      if (err.message === NOT_FOUND_ERROR_CARD_MESSAGE) {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { UNAUTHORIZED_ERROR } from '../utils/constants';
 
 interface SessionRequest extends Request {
     user?: string | JwtPayload;
@@ -7,18 +8,18 @@ interface SessionRequest extends Request {
 
 const handleAuthError = (res: Response) => {
   res
-    .status(401)
+    .status(UNAUTHORIZED_ERROR)
     .send({ message: 'Необходима авторизация' });
 };
 
 const extractBearerToken = (header: string): string => header.replace('Bearer ', '');
 
-// eslint-disable-next-line consistent-return
 export default (req: SessionRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError(res);
+    handleAuthError(res);
+    return;
   }
 
   const token = extractBearerToken(authorization);
@@ -27,7 +28,8 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
   try {
     payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    return handleAuthError(res);
+    handleAuthError(res);
+    return;
   }
 
   req.user = payload;
