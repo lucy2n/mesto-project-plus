@@ -60,10 +60,6 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => {
       const {
         _id,
-        email,
-        name,
-        about,
-        avatar,
       } = user;
       res.status(CREATED).send({
         _id,
