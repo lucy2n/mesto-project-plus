@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema<IUser>({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (v: string) => validator.isURL(v),
+      message: 'Неправильный формат URL',
+    },
   },
   email: {
     type: String,
@@ -66,4 +70,4 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
     });
 });
 
-export default mongoose.model<IUser, UserModel>('User', userSchema);
+export default mongoose.model<IUser, UserModel>('user', userSchema);

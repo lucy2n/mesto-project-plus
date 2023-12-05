@@ -9,7 +9,6 @@ import {
 } from '../utils/constants';
 import { IUserRequest } from '../types';
 import NotFoundError from '../errors/not-found-err';
-import UnauthorizedError from '../errors/unauthorized-err';
 import ConflictError from '../errors/conflict-err';
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
@@ -72,7 +71,6 @@ export const updateProfile = (req: IUserRequest, res: Response, next: NextFuncti
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
     .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
@@ -90,10 +88,9 @@ export const updateProfileAvatar = (req: IUserRequest, res: Response, next: Next
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
-    .orFail(new Error(NOT_FOUND_ERROR_USER_MESSAGE))
+    .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
@@ -109,16 +106,14 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
       });
     })
-    .catch(() => {
-      next((new UnauthorizedError('Передан неверный логин или пароль')));
-    });
+    .catch((err) => next(err));
 };
 
 export const getUser = (req: IUserRequest, res: Response, next: NextFunction) => {
   User.findById(req.user?._id)
-    .orFail(new Error(NOT_FOUND_ERROR_USER_MESSAGE))
+    .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
-    .catch((err: Error) => next(err));
+    .catch((err) => next(err));
 };

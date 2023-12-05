@@ -22,9 +22,8 @@ export const deleteCardById = (req: IUserRequest, res: Response, next: NextFunct
       if (String(card.owner) !== req.user?._id) {
         throw new ForbiddenError('Нет доступа для удаления карточки');
       }
-      return card;
+      return Card.deleteOne(card._id);
     })
-    .then((card) => Card.findByIdAndDelete(card))
     .then((card) => res.status(REQUEST_OK).send({ data: card }))
     .catch((err) => next(err));
 };
