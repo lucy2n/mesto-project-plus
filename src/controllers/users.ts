@@ -5,13 +5,10 @@ import User from '../models/user';
 import {
   NOT_FOUND_ERROR_USER_MESSAGE,
   REQUEST_OK,
-  VALIDATION_ERROR_NAME,
   CREATED,
-  CAST_ERROR_NAME,
 } from '../utils/constants';
 import { IUserRequest } from '../types';
 import NotFoundError from '../errors/not-found-err';
-import ValidationError from '../errors/validation-err';
 import UnauthorizedError from '../errors/unauthorized-err';
 import ConflictError from '../errors/conflict-err';
 
@@ -33,8 +30,6 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
     .catch((err) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         next(err);
-      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
-        next(new ValidationError('Переданы некорректные данные для поиска пользователя'));
       } else {
         next(err);
       }
@@ -72,8 +67,6 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     .catch((err) => {
       if (err.code === 11000) {
         next((new ConflictError('Пользователь с таким email уже существует')));
-      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
-        next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
       }
@@ -98,8 +91,6 @@ export const updateProfile = (req: IUserRequest, res: Response, next: NextFuncti
     .catch((err) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         next(err);
-      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
-        next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
       } else {
         next(err);
       }
@@ -124,8 +115,6 @@ export const updateProfileAvatar = (req: IUserRequest, res: Response, next: Next
     .catch((err) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         next(err);
-      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
-        next(new ValidationError('Переданы некорректные данные при обновлении аватара'));
       } else {
         next(err);
       }
@@ -155,8 +144,6 @@ export const getUser = (req: IUserRequest, res: Response, next: NextFunction) =>
     .catch((err: Error) => {
       if (err.message === NOT_FOUND_ERROR_USER_MESSAGE) {
         next(err);
-      } else if (err.name === VALIDATION_ERROR_NAME || err.name === CAST_ERROR_NAME) {
-        next(new ValidationError('Переданы некорректные данные при поиске пользователя'));
       } else {
         next(err);
       }
