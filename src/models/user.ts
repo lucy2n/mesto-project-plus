@@ -2,6 +2,7 @@ import mongoose, { Model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import UnauthorizedError from '../errors/unauthorized-err';
+import { defaultValue } from '../config';
 
 interface IUser {
   name: string;
@@ -21,17 +22,17 @@ const userSchema = new mongoose.Schema<IUser>({
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив Кусто',
+    default: defaultValue.name,
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь',
+    default: defaultValue.about,
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    default: defaultValue.avatar,
     validate: {
       validator: (v: string) => validator.isURL(v),
       message: 'Неправильный формат URL',
