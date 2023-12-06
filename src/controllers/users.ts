@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/user';
+import { UpdateQuery } from 'mongoose';
+import User, { IUser } from '../models/user';
 import {
   NOT_FOUND_ERROR_USER_MESSAGE,
   REQUEST_OK,
@@ -14,15 +15,6 @@ import ConflictError from '../errors/conflict-err';
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
     .then((users) => res.status(REQUEST_OK).send({ data: users }))
-    .catch((err) => next(err));
-};
-
-export const getUserById = (req: Request, res: Response, next: NextFunction) => {
-  User.findById(req.params.userId)
-    .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
-    .then((user) => {
-      res.status(REQUEST_OK).send({ data: user });
-    })
     .catch((err) => next(err));
 };
 
@@ -63,11 +55,15 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export const updateProfile = (req: IUserRequest, res: Response, next: NextFunction) => {
-  const { name, about } = req.body;
+const updateProfile = (
+  req: IUserRequest,
+  res: Response,
+  next: NextFunction,
+  update?: UpdateQuery<IUser>,
+) => {
   User.findByIdAndUpdate(
     req.user?._id,
-    { name, about },
+    update,
     {
       new: true,
       runValidators: true,
@@ -80,21 +76,16 @@ export const updateProfile = (req: IUserRequest, res: Response, next: NextFuncti
     .catch((err) => next(err));
 };
 
+// this 2
+export const updateProfileDescription = (req: IUserRequest, res: Response, next: NextFunction) => {
+  const { name, about } = req.body;
+  updateProfile(req, res, next, { name, about });
+};
+
+// this 2
 export const updateProfileAvatar = (req: IUserRequest, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(
-    req.user?._id,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
-    .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
-    .then((user) => {
-      res.status(REQUEST_OK).send({ data: user });
-    })
-    .catch((err) => next(err));
+  updateProfile(req, res, next, { avatar });
 };
 
 export const login = (req: Request, res: Response, next: NextFunction) => {
@@ -109,11 +100,19 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .catch((err) => next(err));
 };
 
-export const getUser = (req: IUserRequest, res: Response, next: NextFunction) => {
-  User.findById(req.user?._id)
+export const getUser = (res: Response, next: NextFunction, id: string) => {
+  User.findById(id)
     .orFail(new NotFoundError(NOT_FOUND_ERROR_USER_MESSAGE))
     .then((user) => {
       res.status(REQUEST_OK).send({ data: user });
     })
     .catch((err) => next(err));
+};
+
+export const getUserById = (req: Request, res: Response, next: NextFunction) => {
+  getUser(res, next, req.params.id);
+};
+
+export const getAuthorizedUser = (req: IUserRequest, res: Response, next: NextFunction) => {
+  getUser(res, next, req.user?._id);
 };

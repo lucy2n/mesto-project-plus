@@ -35,11 +35,10 @@ export const createCard = (req: IUserRequest, res: Response, next: NextFunction)
     .catch((err) => next(err));
 };
 
-export const likeCard = (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.body;
+export const likeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: userId } },
+    { $addToSet: { likes: req.user?._id } },
     { new: true },
   )
     .orFail(new NotFoundError(NOT_FOUND_ERROR_CARD_MESSAGE))
@@ -49,11 +48,10 @@ export const likeCard = (req: Request, res: Response, next: NextFunction) => {
     .catch((err) => next(err));
 };
 
-export const dislikeCard = (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.body;
+export const dislikeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: userId } },
+    { $pull: { likes: req.user?._id } },
     { new: true },
   )
     .orFail(new NotFoundError(NOT_FOUND_ERROR_CARD_MESSAGE))

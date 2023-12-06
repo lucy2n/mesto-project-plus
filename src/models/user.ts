@@ -4,7 +4,7 @@ import validator from 'validator';
 import UnauthorizedError from '../errors/unauthorized-err';
 import { defaultValue } from '../config';
 
-interface IUser {
+export interface IUser {
   name: string;
   about: string;
   avatar: string;
