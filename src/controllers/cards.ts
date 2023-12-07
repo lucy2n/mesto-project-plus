@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { UpdateQuery } from 'mongoose';
+import { IUser } from '../models/user';
 import NotFoundError from '../errors/not-found-err';
 import Card from '../models/card';
 import {
@@ -35,10 +37,15 @@ export const createCard = (req: IUserRequest, res: Response, next: NextFunction)
     .catch((err) => next(err));
 };
 
-export const likeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
+const handleCardAction = (
+  req: IUserRequest,
+  res: Response,
+  next: NextFunction,
+  update?: UpdateQuery<IUser>,
+) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user?._id } },
+    update,
     { new: true },
   )
     .orFail(new NotFoundError(NOT_FOUND_ERROR_CARD_MESSAGE))
@@ -48,15 +55,10 @@ export const likeCard = (req: IUserRequest, res: Response, next: NextFunction) =
     .catch((err) => next(err));
 };
 
+export const likeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
+  handleCardAction(req, res, next, { $addToSet: { likes: req.user?._id } });
+};
+
 export const dislikeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user?._id } },
-    { new: true },
-  )
-    .orFail(new NotFoundError(NOT_FOUND_ERROR_CARD_MESSAGE))
-    .then((card) => {
-      res.status(REQUEST_OK).send({ data: card });
-    })
-    .catch((err) => next(err));
+  handleCardAction(req, res, next, { $pull: { likes: req.user?._id } });
 };

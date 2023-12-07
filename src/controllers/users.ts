@@ -76,13 +76,11 @@ const updateProfile = (
     .catch((err) => next(err));
 };
 
-// this 2
 export const updateProfileDescription = (req: IUserRequest, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
   updateProfile(req, res, next, { name, about });
 };
 
-// this 2
 export const updateProfileAvatar = (req: IUserRequest, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   updateProfile(req, res, next, { avatar });
